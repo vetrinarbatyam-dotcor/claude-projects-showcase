@@ -1,0 +1,616 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>מה קלוד קוד בנה לי</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;700;800&family=Assistant:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link rel="preload" as="image" href="presentation/images/slide01_projects-dashboard.png">
+<link rel="preload" as="image" href="presentation/images/slide02_echo-cardio.png">
+<style>
+  * { box-sizing: border-box; }
+  html,body{ margin:0; padding:0; height:100%; background:#05070d; overflow:hidden; }
+  body{ font-family:'Assistant',sans-serif; }
+
+  .deck-viewport{ position:fixed; inset:0; width:100vw; height:100vh; overflow:hidden; background:#05070d; }
+  .stage{ position:absolute; top:50%; left:50%; width:1920px; height:1080px; transform:translate(-50%,-50%); }
+
+  .slide{ position:absolute; inset:0; width:1920px; height:1080px; opacity:0; pointer-events:none; transition:opacity .6s ease; overflow:hidden; color:#F1F5F9; }
+  .slide.active{ opacity:1; pointer-events:auto; }
+
+  /* backgrounds */
+  .slide{ background: radial-gradient(1100px 760px at 82% 12%, var(--glow,#22D3EE14) 0%, transparent 60%), linear-gradient(160deg,#0f172a,#1a2436 55%,#1e293b); }
+  .bg-rings::before{ content:""; position:absolute; inset:-200px; background: repeating-radial-gradient(circle at 50% 45%, transparent 0 70px, #22D3EE12 70px 73px); pointer-events:none; }
+  .bg-grid::before{ content:""; position:absolute; inset:0; background-image: linear-gradient(#22D3EE0d 1px, transparent 1px), linear-gradient(90deg,#22D3EE0d 1px, transparent 1px); background-size:64px 64px; pointer-events:none; }
+  .bg-loop::before{ content:""; position:absolute; width:1400px; height:1400px; border-radius:50%; border:2px dashed #22D3EE1a; top:50%; left:50%; transform:translate(-50%,-50%); pointer-events:none; }
+
+  .icon-badge{ position:absolute; top:56px; left:70px; font-size:46px; opacity:.9; filter:drop-shadow(0 4px 12px rgba(0,0,0,.4)); }
+
+  .slide-inner{ position:relative; z-index:1; width:100%; height:100%; padding:90px 110px; display:flex; flex-direction:column; }
+  .slide-header{ margin-bottom:36px; }
+  .kicker{ font-family:'Heebo',sans-serif; font-weight:700; font-size:15px; letter-spacing:.5px; color:#FB923C; margin:0 0 10px; }
+  .slide-title{ font-family:'Heebo',sans-serif; font-weight:800; font-size:46px; line-height:1.25; color:#F8FAFC; margin:0 0 10px; }
+  .slide-title .accent{ color:#22D3EE; }
+  .slide-sub{ font-family:'Assistant',sans-serif; font-weight:300; font-size:22px; color:#67E8F9; margin:0; }
+  .rule{ width:120px; height:3px; background:#22D3EE; border-radius:2px; margin-top:18px; }
+
+  .split{ display:flex; flex:1; gap:70px; align-items:center; min-height:0; }
+  .col-text{ flex:1.05; min-width:0; }
+  .col-media{ flex:1; display:flex; justify-content:center; align-items:center; min-width:0; }
+
+  .bullets{ list-style:none; margin:0 0 22px; padding:0; display:flex; flex-direction:column; gap:15px; }
+  .bullets li{ font-size:19px; color:#CBD5E1; line-height:1.55; position:relative; padding-inline-end:26px; }
+  .bullets li::before{ content:""; position:absolute; top:9px; inset-inline-end:0; width:8px; height:8px; border-radius:50%; background:#22D3EE; }
+  .bullets li b{ color:#F1F5F9; }
+
+  .tech-box{ background:#152033; border:1px solid #22D3EE4d; border-radius:14px; padding:22px 26px; margin-top:8px; }
+  .tech-box .label{ font-family:'Heebo',sans-serif; font-weight:700; font-size:14px; color:#FB923C; margin:0 0 8px; }
+  .tech-box p{ font-family:'Assistant'; font-size:15.5px; font-style:italic; color:#E2E8F0; line-height:1.65; margin:0; }
+
+  .decision-box{ background:#201a12; border:1px solid #FB923C55; border-radius:14px; padding:20px 24px; margin-top:6px; max-width:640px; }
+  .decision-box .label{ font-family:'Heebo',sans-serif; font-weight:700; font-size:14px; color:#FB923C; margin:0 0 8px; }
+  .decision-box p{ font-family:'Assistant'; font-size:15.5px; font-style:italic; color:#E2E8F0; line-height:1.65; margin:0; }
+
+  .link-btn{ display:inline-flex; align-items:center; gap:10px; font-family:'Heebo',sans-serif; font-weight:700; font-size:19px; color:#FB923C; text-decoration:none; border:1px solid #FB923C66; padding:12px 26px; border-radius:999px; margin-top:24px; direction:ltr; }
+  .link-btn span.he{ direction:rtl; }
+
+  .browser-frame{ border-radius:16px; overflow:hidden; background:#111827; border:1px solid #334155; box-shadow:0 40px 90px -25px rgba(0,0,0,.65); width:100%; max-width:800px; }
+  .browser-bar{ height:38px; display:flex; align-items:center; gap:7px; padding:0 14px; background:#0d1420; }
+  .browser-dot{ width:10px; height:10px; border-radius:50%; }
+  .browser-url{ direction:ltr; text-align:left; flex:1; background:#05070d; color:#8fa3bf; font-family:'Assistant'; font-size:12.5px; padding:5px 12px; border-radius:6px; margin-right:10px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .browser-shot{ display:block; width:100%; height:452px; object-fit:cover; object-position:top; }
+  .browser-shot.tall{ height:500px; }
+  .browser-shot.small{ height:300px; }
+
+  /* whatsapp bubble */
+  .wa-wrap{ display:flex; flex-direction:column; align-items:flex-end; gap:16px; width:100%; max-width:520px; }
+  .wa-bubble{ background:#dcf8c6; color:#0b1a0b; border-radius:14px 14px 3px 14px; padding:20px 22px; font-family:'Assistant'; font-size:16.5px; line-height:1.7; box-shadow:0 12px 34px rgba(0,0,0,.35); }
+  .wa-btn{ align-self:stretch; text-align:center; background:#ffffff; color:#128C7E; font-family:'Heebo',sans-serif; font-weight:700; font-size:16px; padding:12px; border-radius:0 0 14px 14px; margin-top:-16px; border:1px solid #d9f2e6; }
+
+  /* card grid */
+  .card-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:26px; flex:1; align-content:start; }
+  .card{ background:#152033; border:1px solid #334155; border-radius:16px; overflow:hidden; display:flex; flex-direction:column; }
+  .card img{ width:100%; height:150px; object-fit:cover; object-position:top; display:block; }
+  .card .card-body{ padding:16px 20px; }
+  .card .card-title{ font-family:'Heebo',sans-serif; font-weight:700; font-size:18px; color:#22D3EE; margin:0 0 6px; }
+  .card .card-desc{ font-family:'Assistant'; font-size:14px; color:#94A3B8; margin:0 0 8px; line-height:1.5; }
+  .card .card-link{ font-family:'Heebo',sans-serif; font-weight:700; font-size:12.5px; color:#FB923C; direction:ltr; display:inline-block; }
+  .card.icon-only{ align-items:center; justify-content:center; text-align:center; padding:24px; }
+  .card.icon-only .emoji{ font-size:44px; margin-bottom:10px; }
+
+  /* title slide */
+  .title-slide{ display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; height:100%; padding:0 160px; }
+  .title-main{ font-family:'Heebo',sans-serif; font-weight:800; font-size:88px; color:#F8FAFC; margin:0; }
+  .title-sub{ font-family:'Assistant',sans-serif; font-weight:300; font-size:30px; color:#22D3EE; margin:22px 0 0; }
+  .title-lead{ font-family:'Assistant'; font-size:23px; color:#CBD5E1; max-width:900px; margin:44px auto 0; line-height:1.6; }
+  .title-cta{ margin-top:52px; }
+
+  /* stat slide */
+  .stat-split{ display:flex; flex:1; align-items:center; gap:60px; }
+  .stat-num{ font-family:'Heebo',sans-serif; font-weight:800; font-size:190px; color:#FB923C; text-shadow:0 0 60px #fb923c55; line-height:1; }
+  .stat-caption{ font-family:'Assistant'; font-size:20px; color:#CBD5E1; text-align:center; max-width:420px; margin-top:14px; }
+  .stat-col{ flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; }
+
+  /* flow diagram */
+  .flow{ display:flex; flex-direction:row-reverse; gap:0; align-items:stretch; margin:26px 0; }
+  .flow-step{ flex:1; background:#152033; border:1px solid #334155; border-radius:14px; padding:22px 20px; text-align:center; position:relative; }
+  .flow-step .num{ font-family:'Heebo',sans-serif; font-weight:800; font-size:30px; color:#22D3EE; }
+  .flow-step .emoji{ font-size:26px; display:block; margin-bottom:6px; }
+  .flow-step .ftitle{ font-family:'Heebo',sans-serif; font-weight:700; font-size:16px; color:#F1F5F9; margin:8px 0 6px; }
+  .flow-step .fdesc{ font-family:'Assistant'; font-size:13px; color:#94A3B8; line-height:1.5; }
+  .flow-arrow{ display:flex; align-items:center; justify-content:center; width:44px; color:#22D3EE; font-size:22px; }
+  .meaning-box{ background:#152033; border:1px solid #22D3EE55; border-radius:14px; padding:20px 30px; text-align:center; max-width:1100px; margin:10px auto 0; }
+  .meaning-box p{ font-family:'Assistant'; font-style:italic; font-size:17px; color:#E2E8F0; line-height:1.7; margin:0; }
+  .mini-shots{ display:flex; gap:16px; margin-top:20px; }
+  .mini-shots .browser-frame{ max-width:340px; }
+  .mini-shots .browser-shot{ height:180px; }
+
+  /* agent grid final */
+  .agent-grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:20px; flex:1; align-content:start; }
+  .closing-title{ font-family:'Heebo',sans-serif; font-weight:800; font-size:34px; text-align:center; margin:30px 0 6px; }
+  .closing-title .accent{ color:#22D3EE; }
+  .closing-cta{ text-align:center; }
+
+  /* nav controls */
+  .nav-btn{ position:fixed; top:50%; transform:translateY(-50%); width:56px; height:56px; border-radius:50%; background:#1e293bcc; border:1px solid #334155; color:#22D3EE; font-size:24px; display:flex; align-items:center; justify-content:center; cursor:pointer; z-index:50; user-select:none; direction:ltr; unicode-bidi:bidi-override; }
+  .nav-btn:hover{ background:#22D3EE22; }
+  #prevBtn{ left:24px; }
+  #nextBtn{ right:24px; }
+  #counter{ position:fixed; bottom:22px; left:50%; transform:translateX(-50%); font-family:'Heebo',sans-serif; font-size:14px; color:#64748b; z-index:50; direction:ltr; }
+</style>
+</head>
+<body>
+<div class="deck-viewport">
+  <div class="stage">
+
+    <!-- SLIDE 1 -->
+    <section class="slide active bg-rings" id="s1">
+      <div class="slide-inner">
+        <div class="title-slide">
+          <h1 class="title-main">מה קלוד קוד בנה לי</h1>
+          <p class="title-sub">עשרות פרויקטים, בלי צוות פיתוח אחד — תוך חודשים ספורים</p>
+          <p class="title-lead">אני גיל, וטרינר במרפאת Pet Care בבת-ים. זו סקירה של מה שבניתי עם Claude Code — לא דמואים, מערכות חיות שרצות במרפאה שלי כל יום.</p>
+          <div class="title-cta">
+            <a class="link-btn" href="https://projects.claudevet.com/" target="_blank">🔗 <span class="he">כל הפרויקטים:</span> projects.claudevet.com</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 2 -->
+    <section class="slide" id="s2" style="--glow:#22D3EE1c">
+      <div class="slide-inner">
+        <div class="icon-badge">⭐</div>
+        <div class="slide-header">
+          <p class="kicker">סימולטורים וקורסים · מודגש</p>
+          <h2 class="slide-title">מאמן אקו-לב <span class="accent">תלת-ממדי</span> — הכי מורכב שבנינו</h2>
+          <p class="slide-sub">סימולטור אינטראקטיבי ללימוד בדיקת אקו-לב וטרינרית, בדפדפן, בלי התקנה</p>
+          <div class="rule"></div>
+        </div>
+        <div class="split">
+          <div class="col-text">
+            <ul class="bullets">
+              <li>מודל לב אנטומי תלת-ממדי עם <b>חיתוך אמיתי</b> — לא ציור, גיאומטריה שנחתכת בזמן אמת לפי זווית המתמר</li>
+              <li>מסך אולטרסאונד סינתטי עם ריאליזם אקוסטי: speckle, דופלר צבעוני, גל ספקטרלי</li>
+              <li>מחזור לב מלא המסונכרן ל-ECG חי — פתיחת מסתמים בזמן הנכון פיזיולוגית</li>
+              <li>6 מצבי מחלה (MMVD, DCM, HCM, PS, PH) עם מדידות אוטומטיות — FS%, EF, יחס E:A</li>
+              <li>השוואה ישירה לתמונות אקו אמיתיות מהקליניקה</li>
+            </ul>
+            <div class="tech-box">
+              <p class="label">האתגר הטכני</p>
+              <p>איך חותכים גיאומטרית מישור דרך מודל לב תלת-ממדי כך שהחתך משתנה בזמן אמת בדיוק לפי הזווית שבה הווטרינר מחזיק את המתמר? הפתרון — אלגוריתם שמחשב את חיתוך המישור מול אליפסואיד (sliceEllipsoid) בכל פריים.</p>
+            </div>
+            <a class="link-btn" href="https://vetrinarbatyam-dotcor.github.io/echo-cardio-3d/" target="_blank">🔗 echo-cardio-3d</a>
+          </div>
+          <div class="col-media">
+            <div class="browser-frame">
+              <div class="browser-bar"><span class="browser-dot" style="background:#ff5f56"></span><span class="browser-dot" style="background:#ffbd2e"></span><span class="browser-dot" style="background:#27c93f"></span><span class="browser-url">vetrinarbatyam-dotcor.github.io/echo-cardio-3d</span></div>
+              <img class="browser-shot tall" src="presentation/images/slide02_echo-cardio.png" alt="מאמן אקו-לב">
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 3 -->
+    <section class="slide" id="s3" style="--glow:#22D3EE10">
+      <div class="slide-inner">
+        <div class="slide-header">
+          <p class="kicker">סימולטורים וקורסים</p>
+          <h2 class="slide-title">עוד סימולטורים וקורסים <span class="accent">באותה משפחה</span></h2>
+          <p class="slide-sub">כל אחד: single-file HTML, Three.js, בעברית, בחינם ובענן</p>
+          <div class="rule"></div>
+        </div>
+        <div class="card-grid">
+          <div class="card"><img src="presentation/images/slide03a_abdominal-us.png"><div class="card-body"><p class="card-title">בטן תלת-ממדי</p><p class="card-desc">13 איברי בטן, מצבי CT/US/פתולוגיה, מין כלב/חתול</p><span class="card-link">canine-abdominal-us-3d</span></div></div>
+          <div class="card"><img src="presentation/images/slide03b_neuro-trainer.png"><div class="card-body"><p class="card-title">נוירו-וט</p><p class="card-desc">בדיקה נוירולוגית מלאה + 6 סימולציות מטופל אינטראקטיביות</p><span class="card-link">neuro-trainer</span></div></div>
+          <div class="card"><img src="presentation/images/slide03c_ophtho-trainer.png"><div class="card-body"><p class="card-title">אופתלמו-וט</p><p class="card-desc">בדיקת עיניים תלת-ממדית + מאמן רפלקסים + 4 מטופלים</p><span class="card-link">ophtho-trainer</span></div></div>
+          <div class="card"><img src="presentation/images/slide03d_ccl-lateral-suture.png"><div class="card-body"><p class="card-title">סימולטור ניתוח CCL</p><p class="card-desc">תיקון רצועה צולבת קרועה, 12 שלבי ניתוח + השוואת טכניקות</p><span class="card-link">ccl-lateral-suture-3d</span></div></div>
+          <div class="card"><img src="presentation/images/slide03e_endoscopy.png"><div class="card-body"><p class="card-title">קורס אנדוסקופיה</p><p class="card-desc">8 פרקים על מערכת העיכול + סימולטור אנדוסקופיה תלת-ממדי</p><span class="card-link">endoscopy.nip.io</span></div></div>
+          <div class="card"><img src="presentation/images/slide03f_ultrasound-course.png"><div class="card-body"><p class="card-title">קורס אולטרסאונד בטני</p><p class="card-desc">16 פרקים, 39 חידונים אינטראקטיביים</p><span class="card-link">ultrasound-course.nip.io</span></div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 4 -->
+    <section class="slide" id="s4" style="--glow:#38bdf822">
+      <div class="slide-inner">
+        <div class="icon-badge">🦴</div>
+        <div class="slide-header">
+          <p class="kicker">כלי אוטומציה ו-AI</p>
+          <h2 class="slide-title">דפדפן הרנטגן — מכלול תמונות <span class="accent">לניתוח AI</span></h2>
+          <p class="slide-sub">כל צילום רנטגן מהמכשיר (ExamVue) — מסונכרן אוטומטית, מנותח ב-AI, נשלח ללקוח בלחיצה</p>
+          <div class="rule"></div>
+        </div>
+        <div class="split">
+          <div class="col-text">
+            <ul class="bullets">
+              <li>סנכרון אוטומטי כל 10 דקות מה-Google Drive של מכשיר הרנטגן — בלי מגע יד אדם</li>
+              <li>צפייה מקצועית: זום, מדידות, כלי ניתוח כמו בתוכנת רדיולוגיה אמיתית</li>
+              <li><b>כפתור "ניתוח AI"</b> — מפיק דוח רדיולוגי מובנה בעברית תוך שניות</li>
+              <li><b>שליחה ללקוח</b> — מייל + וואטסאפ, ישירות מהוויוור, עם לוג שליחות מלא</li>
+            </ul>
+            <a class="link-btn" href="http://xray.167.86.69.208.nip.io" target="_blank">🔗 xray.167.86.69.208.nip.io <span class="he">(XRAY / 112026)</span></a>
+          </div>
+          <div class="col-media">
+            <div class="browser-frame">
+              <div class="browser-bar"><span class="browser-dot" style="background:#ff5f56"></span><span class="browser-dot" style="background:#ffbd2e"></span><span class="browser-dot" style="background:#27c93f"></span><span class="browser-url">xray.167.86.69.208.nip.io</span></div>
+              <img class="browser-shot" src="presentation/images/slide04_xray-dashboard.png" alt="דפדפן הרנטגן">
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 5 -->
+    <section class="slide" id="s5" style="--glow:#14b8a622">
+      <div class="slide-inner">
+        <div class="icon-badge">🩸</div>
+        <div class="slide-header">
+          <p class="kicker">כלי אוטומציה ו-AI</p>
+          <h2 class="slide-title">IDEXX — בדיקות דם <span class="accent">שזורמות לתיק לבד</span></h2>
+          <p class="slide-sub">מהמעבדה (IDEXX VetConnect) ישר לתיק הרפואי (ClinicaOnline) — בלי הקלדה ידנית</p>
+          <div class="rule"></div>
+        </div>
+        <div class="split">
+          <div class="col-text">
+            <ul class="bullets">
+              <li>שליפה אוטומטית של תוצאות ברגע שהן מוכנות — גם כשהן מגיעות בשלבים (ספירה, כימיה, תוספות)</li>
+              <li>ניתוח AI של הממצאים + זיהוי חריגות</li>
+              <li>דחיפה אוטומטית ישירות לתיק הלקוח בתוכנת הניהול הקלינית</li>
+            </ul>
+            <div class="tech-box">
+              <p class="label">האתגר הטכני</p>
+              <p>לשתי המערכות אין מזהה משותף ללקוח או לבדיקה. הפתרון — איתור שדה לא-מנוצל (Requisition #) בטופס ההזמנה של המעבדה, ו"הזרקת" מספר התיק של הלקוח מהקליניקה לתוכו. ברגע שהמספר חוזר בתוצאה — יש זיהוי חד-חד-ערכי, ואימות כפול (מספר תיק + שם) לפני כל דחיפה אוטומטית.</p>
+            </div>
+            <a class="link-btn" href="http://idexx.167.86.69.208.nip.io" target="_blank">🔗 idexx.167.86.69.208.nip.io</a>
+          </div>
+          <div class="col-media">
+            <div class="browser-frame">
+              <div class="browser-bar"><span class="browser-dot" style="background:#ff5f56"></span><span class="browser-dot" style="background:#ffbd2e"></span><span class="browser-dot" style="background:#27c93f"></span><span class="browser-url">idexx.167.86.69.208.nip.io</span></div>
+              <img class="browser-shot" src="presentation/images/slide05_idexx-dashboard.png" alt="IDEXX">
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 6 -->
+    <section class="slide" id="s6" style="--glow:#22D3EE18">
+      <div class="slide-inner">
+        <div class="icon-badge">💼</div>
+        <div class="slide-header">
+          <p class="kicker">כלי ניהול</p>
+          <h2 class="slide-title">הדשבורד ניהול — כל מה שקורה <span class="accent">בכסף של המרפאה</span></h2>
+          <p class="slide-sub">פורטל פנימי לגיל, למנהלת ולאחראית הגבייה</p>
+          <div class="rule"></div>
+        </div>
+        <div class="split">
+          <div class="col-text">
+            <ul class="bullets">
+              <li>מעקב חובות לקוחות — שוטפים והיסטוריים, עם היסטוריית הערות מלאה לכל לקוח</li>
+              <li>שליחת תזכורות WhatsApp עם תבניות מותאמות אישית ({{שם}}, {{סכום}}, {{תאריך}})</li>
+              <li>לשונית השוואת תביעות ביטוח מרפאט</li>
+            </ul>
+            <a class="link-btn" href="http://management.167.86.69.208.nip.io" target="_blank">🔗 management.167.86.69.208.nip.io <span class="he">(קוד: 112026)</span></a>
+          </div>
+          <div class="col-media">
+            <div class="browser-frame">
+              <div class="browser-bar"><span class="browser-dot" style="background:#ff5f56"></span><span class="browser-dot" style="background:#ffbd2e"></span><span class="browser-dot" style="background:#27c93f"></span><span class="browser-url">management.167.86.69.208.nip.io</span></div>
+              <img class="browser-shot" src="presentation/images/slide06_management-dashboard.png" alt="דשבורד ניהול">
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 7 -->
+    <section class="slide" id="s7" style="--glow:#4ade8022">
+      <div class="slide-inner">
+        <div class="icon-badge">📋</div>
+        <div class="slide-header">
+          <p class="kicker">כלי ניהול</p>
+          <h2 class="slide-title">אולגה — הסוכן שעוקב אחרי <span class="accent">כל שקל חדש</span> שנוסף לחוב</h2>
+          <p class="slide-sub">רץ אוטומטית כל בוקר, שולח סיכום יומי/שבועי/חודשי לגיל, למנהלת ולאחראית הגבייה</p>
+          <div class="rule"></div>
+        </div>
+        <div class="split">
+          <div class="col-text">
+            <div class="decision-box">
+              <p class="label">החלטה מעניינת</p>
+              <p>למה "תוספת חדשה" ולא "יתרה כוללת"? כי דיווח על חוב מצטבר גרר איתו מיליון ש"ח היסטורי בכל הודעה — עומס מידע ותחושת חוסר-אונים. הדיווח על ה"דלתא" בלבד הפך את הסוכן לשימושי בפועל.</p>
+            </div>
+          </div>
+          <div class="col-media">
+            <div class="wa-wrap">
+              <div class="wa-bubble">📋 חוב חדש שנוסף <span dir="ltr">3.7.2026</span>
+<br><br>
+1. פזית גוזלן — <span dir="ltr">+₪159</span> (יתרה <span dir="ltr">₪17,500</span>)<br>
+2. פז מנו — <span dir="ltr">+₪80</span> (יתרה <span dir="ltr">₪11,827</span>)<br>
+3. זינה מישקין — <span dir="ltr">+₪3,115</span> (יתרה <span dir="ltr">₪3,490</span>)<br>
+4. ליעד קדר — <span dir="ltr">+₪328</span> (יתרה <span dir="ltr">₪328</span>)<br>
+5. אילנית אזולאי — <span dir="ltr">+₪50</span> (יתרה <span dir="ltr">₪180</span>)<br>
+6. אנגלה בנימינוב — <span dir="ltr">+₪60</span> (יתרה <span dir="ltr">₪60</span>)
+<br><br>
+סה"כ נוסף היום: <span dir="ltr">₪3,792</span> (6 לקוחות)<br>
+📅 מתחילת החודש: <span dir="ltr">₪5,896</span> (14 לקוחות)</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 8 -->
+    <section class="slide" id="s8" style="--glow:#22D3EE18">
+      <div class="slide-inner">
+        <div class="icon-badge">🧾</div>
+        <div class="slide-header">
+          <p class="kicker">כלי ניהול</p>
+          <h2 class="slide-title">מרפאט — הביקורת <span class="accent">שלא מפספסת תביעה</span></h2>
+          <p class="slide-sub">השוואה יומית אוטומטית בין דוחות המרפאה לתביעות שהוגשו לביטוח</p>
+          <div class="rule"></div>
+        </div>
+        <div class="split">
+          <div class="col-text">
+            <ul class="bullets">
+              <li>סריקה יומית של כל הביקורים והחיסונים מול מה שנתבע בפועל</li>
+              <li>זיהוי פערים — טיפולים שבוצעו אך לא נתבעו</li>
+              <li><b>מערכת למידה</b>: הצוות מתייג ממצאים שגויים → מנוע ה-AI לומד → הביקורת הבאה כבר מדויקת יותר</li>
+              <li>אומדן כספי אוטומטי של הנזק מתביעות שהוחמצו</li>
+            </ul>
+            <a class="link-btn" href="http://management.167.86.69.208.nip.io/marpet" target="_blank">🔗 management…/marpet</a>
+          </div>
+          <div class="col-media">
+            <div class="browser-frame">
+              <div class="browser-bar"><span class="browser-dot" style="background:#ff5f56"></span><span class="browser-dot" style="background:#ffbd2e"></span><span class="browser-dot" style="background:#27c93f"></span><span class="browser-url">management.167.86.69.208.nip.io/marpet</span></div>
+              <img class="browser-shot" src="presentation/images/slide08_marpet-tab.png" alt="מרפאט">
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 9 -->
+    <section class="slide" id="s9" style="--glow:#fb923c22">
+      <div class="slide-inner">
+        <div class="icon-badge">💉</div>
+        <div class="slide-header">
+          <p class="kicker">מנגנוני בקרה</p>
+          <h2 class="slide-title">כלבת — הבאג שכמעט שלח <span class="accent">אלפי תזכורות שגויות</span></h2>
+          <p class="slide-sub">שער בטיחות משותף לכל סוכני התזכורות של המרפאה</p>
+          <div class="rule"></div>
+        </div>
+        <div class="stat-split">
+          <div class="col-text">
+            <ul class="bullets">
+              <li>חיסון כלבת ניתן <b>פעם בשנתיים</b> — אבל כ-88% מהרשומות במערכת הקלינית הוגדרו שגוי כ"כל שנה"</li>
+              <li>בלי תיקון: מאות כלבים היו מקבלים תזכורת חיסון מוקדמת בשנה שלמה, כל שנה, לתמיד</li>
+              <li>השער בודק את התאריך האמיתי לפני כל תזכורת יוצאת — משותף לכל הסוכנים</li>
+              <li>ביקורת חודשית נפרדת מול נתוני הרשויות המקומיות לאיתור פערי אגרה ורישום</li>
+            </ul>
+          </div>
+          <div class="stat-col">
+            <div class="stat-num">88%</div>
+            <p class="stat-caption">מרשומות הכלבת היו שגויות — עד שהשער תוקן</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 10 -->
+    <section class="slide bg-grid" id="s10" style="--glow:#22D3EE1a">
+      <div class="slide-inner">
+        <div class="icon-badge">🎛️</div>
+        <div class="slide-header">
+          <p class="kicker">תשתית הסוכנים</p>
+          <h2 class="slide-title">agents-v2 — חדר הבקרה <span class="accent">של כל הסוכנים</span></h2>
+          <p class="slide-sub">מתג אחד לכל סוכן, מכסות, לוגים, ותרשימי זרימה חיים</p>
+          <div class="rule"></div>
+        </div>
+        <div class="split">
+          <div class="col-text">
+            <ul class="bullets">
+              <li>הפעלה/כיבוי כל סוכן בנפרד, בלחיצה</li>
+              <li>מכסות שליחה יומיות לכל סוכן — מונע הצפה או חסימה של המספר</li>
+              <li><b>מתג חירום (kill-switch)</b> — עוצר את כל ההודעות היוצאות מיידית, לכל הסוכנים</li>
+              <li>לוג הודעות מלא + תרשימי זרימה ויזואליים לכל סוכן</li>
+            </ul>
+            <a class="link-btn" href="http://agents.167.86.69.208.nip.io" target="_blank">🔗 agents.167.86.69.208.nip.io <span class="he">(קוד: 112026)</span></a>
+          </div>
+          <div class="col-media">
+            <div class="browser-frame">
+              <div class="browser-bar"><span class="browser-dot" style="background:#ff5f56"></span><span class="browser-dot" style="background:#ffbd2e"></span><span class="browser-dot" style="background:#27c93f"></span><span class="browser-url">agents.167.86.69.208.nip.io</span></div>
+              <img class="browser-shot" src="presentation/images/slide10_agents-v2-overview.png" alt="agents-v2">
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 11 -->
+    <section class="slide" id="s11" style="--glow:#4ade8018">
+      <div class="slide-inner">
+        <div class="icon-badge">🔘</div>
+        <div class="slide-header">
+          <p class="kicker">תשתית הסוכנים</p>
+          <h2 class="slide-title">מטקסט חופשי <span class="accent">לכפתורים מאושרים</span></h2>
+          <p class="slide-sub">כל סוכני ההודעות היזומות עברו לתבניות WhatsApp רשמיות (Meta Business) עם כפתורי-לחיצה</p>
+          <div class="rule"></div>
+        </div>
+        <div class="split">
+          <div class="col-text">
+            <ul class="bullets">
+              <li>כפתורים כמו "לקביעת תור 📅" במקום שהלקוח יצטרך להקליד תשובה חופשית</li>
+              <li>ערוץ רשמי ויציב — פחות חסימות מספר, יותר אמינות</li>
+              <li>כל הסוכנים היזומים (רוני, זלטה, אירינה, סאשה, מורן) עברו לפורמט הזה</li>
+            </ul>
+            <a class="link-btn" href="https://vetrinarbatyam-dotcor.github.io/clinic-agents-demos/" target="_blank">🔗 clinic-agents-demos</a>
+          </div>
+          <div class="col-media">
+            <div class="wa-wrap">
+              <div class="wa-bubble">💉 היי! זו תזכורת ידידותית מ-Pet Care 🐾<br>הגיע הזמן לחיסון הבא של החיה שלכם.</div>
+              <div class="wa-btn">📅 לקביעת תור</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 12 -->
+    <section class="slide" id="s12" style="--glow:#22D3EE18">
+      <div class="slide-inner">
+        <div class="icon-badge">💉</div>
+        <div class="slide-header">
+          <p class="kicker">הסוכנים</p>
+          <h2 class="slide-title">רוני — תזכורות חיסונים, <span class="accent">אוטומטית ובזמן</span></h2>
+          <p class="slide-sub">שולחת תזכורת חיסון לפי מרחק מהתור הבא, ב-4 שלבים מדורגים</p>
+          <div class="rule"></div>
+        </div>
+        <div class="split">
+          <div class="col-text">
+            <ul class="bullets">
+              <li>תזמון אוטומטי לפי תאריך החיסון הבא של כל חיה</li>
+              <li>שער-כלבת מובנה — לא שולחת תזכורת כלבת שגויה</li>
+              <li>תקרת שליחה יומית — לא מציפה את המספר</li>
+              <li>רצה כל בוקר לבד, בלי שאף אחד יצטרך להריץ אותה</li>
+            </ul>
+            <a class="link-btn" href="http://agents.167.86.69.208.nip.io" target="_blank">🔗 agents.167.86.69.208.nip.io ← לשונית רוני</a>
+          </div>
+          <div class="col-media">
+            <div class="browser-frame">
+              <div class="browser-bar"><span class="browser-dot" style="background:#ff5f56"></span><span class="browser-dot" style="background:#ffbd2e"></span><span class="browser-dot" style="background:#27c93f"></span><span class="browser-url">agents.167.86.69.208.nip.io</span></div>
+              <img class="browser-shot" src="presentation/images/slide12_roni-tab.png" alt="רוני">
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 13 -->
+    <section class="slide" id="s13" style="--glow:#22D3EE1c">
+      <div class="slide-inner">
+        <div class="icon-badge">🤖</div>
+        <div class="slide-header">
+          <p class="kicker">הסוכנים · הכי מורכב</p>
+          <h2 class="slide-title">אלכס — המזכירה הדיגיטלית <span class="accent">שעונה 24/7</span></h2>
+          <p class="slide-sub">הסוכנת המורכבת ביותר שבנינו</p>
+          <div class="rule"></div>
+        </div>
+        <div class="split">
+          <div class="col-text">
+            <ul class="bullets">
+              <li>עונה בוואטסאפ ללקוחות המרפאה בכל שעה, כל יום</li>
+              <li>מנהלת תפריט קביעת-תורים דטרמיניסטי — מציעה זמנים אמיתיים מהיומן</li>
+              <li>מבינה העדפות בשפה חופשית: "אחרי 17:00", "לא ביום ראשון", "הכי מוקדם שיש"</li>
+              <li>מזהה שאלה רפואית/דחופה ומעבירה מיד לצוות אנושי</li>
+            </ul>
+            <a class="link-btn" href="https://vetrinarbatyam-dotcor.github.io/clinic-agents-demos/alex" target="_blank">🔗 clinic-agents-demos/alex</a>
+          </div>
+          <div class="col-media">
+            <div class="browser-frame">
+              <div class="browser-bar"><span class="browser-dot" style="background:#ff5f56"></span><span class="browser-dot" style="background:#ffbd2e"></span><span class="browser-dot" style="background:#27c93f"></span><span class="browser-url">clinic-agents-demos/alex</span></div>
+              <img class="browser-shot" src="presentation/images/slide13_alex-demo.png" alt="אלכס">
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 14 -->
+    <section class="slide bg-loop" id="s14" style="--glow:#22D3EE22">
+      <div class="slide-inner">
+        <div class="icon-badge">🧠</div>
+        <div class="slide-header">
+          <p class="kicker">הסוכנים · שיא הטכני</p>
+          <h2 class="slide-title">איך אלכס לומדת מהטעויות שלה — <span class="accent">כל לילה, לבד</span></h2>
+          <p class="slide-sub">לולאת למידה יומית שרצה בלי מגע יד אדם, עד שלב האישור</p>
+          <div class="rule"></div>
+        </div>
+        <div class="flow">
+          <div class="flow-step"><span class="emoji">🌙</span><div class="num">1</div><p class="ftitle">21:15 — ניתוח לילי</p><p class="fdesc">סוכן AI נפרד קורא את כל שיחות היום של אלכס</p></div>
+          <div class="flow-arrow">➜</div>
+          <div class="flow-step"><span class="emoji">🔍</span><div class="num">2</div><p class="ftitle">זיהוי בעיות</p><p class="fdesc">מאתר טעויות ואי-דיוקים בתגובות של אלכס</p></div>
+          <div class="flow-arrow">➜</div>
+          <div class="flow-step"><span class="emoji">💡</span><div class="num">3</div><p class="ftitle">הצעות ידע</p><p class="fdesc">מנסח כלל התנהגות קונקרטי שהיה פותר את הבעיה</p></div>
+          <div class="flow-arrow">➜</div>
+          <div class="flow-step"><span class="emoji">✅</span><div class="num">4</div><p class="ftitle">אישור גיל</p><p class="fdesc">אישור בלחיצת כפתור → מוזרק אוטומטית להוראות של אלכס</p></div>
+        </div>
+        <div class="meaning-box">
+          <p>אלכס לא מתוכנתת מחדש ע"י מתכנת. היא משתפרת בעצמה, יום אחרי יום, מהשיחות האמיתיות שלה — וגיל רק מאשר את מה שהיא כבר גילתה לבד.</p>
+        </div>
+        <div class="mini-shots" style="justify-content:center;">
+          <div class="browser-frame"><div class="browser-bar"><span class="browser-dot" style="background:#ff5f56"></span><span class="browser-dot" style="background:#ffbd2e"></span><span class="browser-dot" style="background:#27c93f"></span><span class="browser-url">agents-v2/schemas.html</span></div><img class="browser-shot" src="presentation/images/slide14_agents-v2-schemas.png"></div>
+          <div class="browser-frame"><div class="browser-bar"><span class="browser-dot" style="background:#ff5f56"></span><span class="browser-dot" style="background:#ffbd2e"></span><span class="browser-dot" style="background:#27c93f"></span><span class="browser-url">מח אלכס · הצעות</span></div><img class="browser-shot" src="presentation/images/slide14b_alex-suggestions.png"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 15 -->
+    <section class="slide" id="s15" style="--glow:#fb923c18">
+      <div class="slide-inner">
+        <div class="icon-badge">📞</div>
+        <div class="slide-header">
+          <p class="kicker">הסוכנים</p>
+          <h2 class="slide-title">מורן — אף שיחה שלא נענתה <span class="accent">לא נשארת בלי מענה</span></h2>
+          <p class="slide-sub">מחוברת למרכזיית הטלפון הענן של המרפאה (VOXIA)</p>
+          <div class="rule"></div>
+        </div>
+        <div class="split">
+          <div class="col-text">
+            <ul class="bullets">
+              <li>מזהה כל שיחה נכנסת שלא נענתה, בזמן אמת</li>
+              <li><b>בשעות הפעילות</b>: שולחת מיד הודעת מעקב עם אפשרות לקביעת תור</li>
+              <li><b>בלילה/מחוץ לשעות</b>: שולחת רשימת מרכזי חירום 24/7 עם קישורי ניווט</li>
+              <li>דשבורד ייעודי עם דוחות שבועיים/יומיים</li>
+            </ul>
+            <a class="link-btn" href="http://167.86.69.208:3005/app" target="_blank">🔗 167.86.69.208:3005/app <span class="he">(קוד: 112026)</span></a>
+          </div>
+          <div class="col-media">
+            <div class="browser-frame">
+              <div class="browser-bar"><span class="browser-dot" style="background:#ff5f56"></span><span class="browser-dot" style="background:#ffbd2e"></span><span class="browser-dot" style="background:#27c93f"></span><span class="browser-url">167.86.69.208:3005/app</span></div>
+              <img class="browser-shot" src="presentation/images/slide15_missed-caller-dashboard.png" alt="מורן">
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 16 -->
+    <section class="slide bg-rings" id="s16">
+      <div class="slide-inner">
+        <div class="slide-header">
+          <h2 class="slide-title">והצוות הדיגיטלי <span class="accent">ממשיך לגדול</span></h2>
+          <div class="rule"></div>
+        </div>
+        <div class="agent-grid">
+          <div class="card"><img src="presentation/images/slide16_irina.png"><div class="card-body"><p class="card-title">אירינה</p><p class="card-desc">תזכורת תור 24 שעות מראש, כולל אישור/ביטול</p></div></div>
+          <div class="card"><img src="presentation/images/slide16_sasha.png"><div class="card-body"><p class="card-title">סאשה</p><p class="card-desc">מעקב אחרי טיפולים וניתוחים שבוצעו</p></div></div>
+          <div class="card"><img src="presentation/images/slide16_zalta.png"><div class="card-body"><p class="card-title">זלטה</p><p class="card-desc">תזכורות תביעות ביטוח מרפאט</p></div></div>
+          <div class="card icon-only"><span class="emoji">🕵️</span><p class="card-title">טטיאנה</p><p class="card-desc">איתור לקוחות שנטשו ולא חזרו</p></div>
+          <div class="card icon-only"><span class="emoji">🗄️</span><p class="card-title">עמוס</p><p class="card-desc">מאגר הנתונים המרכזי שמזין את כל השאר</p></div>
+          <div class="card icon-only"><span class="emoji">💬</span><p class="card-title">ולדימיר</p><p class="card-desc">ארכיון מלא של כל שיחות הוואטסאפ עם לקוחות</p></div>
+          <div class="card icon-only"><span class="emoji">🔗</span><p class="card-title">דניאל</p><p class="card-desc">פטקונקט</p></div>
+        </div>
+        <h3 class="closing-title">זה לא היה אפשרי בלי צוות פיתוח — כי הצוות פיתוח הוא <span class="accent">Claude Code</span></h3>
+        <div class="closing-cta">
+          <a class="link-btn" href="https://projects.claudevet.com/" target="_blank">🔗 <span class="he">לכל הפרויקטים:</span> projects.claudevet.com</a>
+        </div>
+      </div>
+    </section>
+
+  </div>
+</div>
+
+<div class="nav-btn" id="prevBtn">‹</div>
+<div class="nav-btn" id="nextBtn">›</div>
+<div id="counter">1 / 16</div>
+
+<script>
+  const slides = Array.from(document.querySelectorAll('.slide'));
+  let idx = 0;
+  function show(i){
+    idx = (i + slides.length) % slides.length;
+    slides.forEach((s,j)=> s.classList.toggle('active', j===idx));
+    document.getElementById('counter').textContent = (idx+1) + ' / ' + slides.length;
+  }
+  function next(){ show(idx+1); }
+  function prev(){ show(idx-1); }
+  document.addEventListener('keydown', (e)=>{
+    if(['ArrowRight','ArrowDown',' ','PageDown'].includes(e.key)){ e.preventDefault(); next(); }
+    if(['ArrowLeft','ArrowUp','PageUp'].includes(e.key)){ e.preventDefault(); prev(); }
+  });
+  document.getElementById('nextBtn').addEventListener('click', next);
+  document.getElementById('prevBtn').addEventListener('click', prev);
+
+  function scaleDeck(){
+    const scale = Math.min(window.innerWidth/1920, window.innerHeight/1080);
+    document.querySelector('.stage').style.transform = 'translate(-50%,-50%) scale(' + scale + ')';
+  }
+  window.addEventListener('resize', scaleDeck);
+  scaleDeck();
+  show(0);
+</script>
+</body>
+</html>
