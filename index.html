@@ -237,13 +237,14 @@
         <div class="split">
           <div class="col-text">
             <ul class="bullets">
-              <li>שליפה אוטומטית של תוצאות ברגע שהן מוכנות — גם כשהן מגיעות בשלבים (ספירה, כימיה, תוספות)</li>
-              <li>ניתוח AI של הממצאים + זיהוי חריגות</li>
-              <li>דחיפה אוטומטית ישירות לתיק הלקוח בתוכנת הניהול הקלינית</li>
+              <li>שואב אוטומטית את הבדיקות מאתר המעבדה (VetConnect) — גם כשהן מגיעות בשלבים (ספירה, כימיה, תוספות)</li>
+              <li>מנתח את הנתונים ודוחף את כל התוצאות ישירות לתוכנת הניהול של המרפאה</li>
+              <li>דוחף את הממצאים העיקריים לתיק הלקוח, מבצע <b>ניתוח AI</b> ומאפשר לדחוף גם אותו לתיק בלחיצה</li>
+              <li><b>חוסך לצוות שעות של עבודה ידנית בכל שבוע</b> — ומונע פספוסים של תוצאות חריגות שהיו יכולות לחמוק מהעין</li>
             </ul>
             <div class="tech-box">
               <p class="label">האתגר הטכני</p>
-              <p>לשתי המערכות אין מזהה משותף ללקוח או לבדיקה. הפתרון — איתור שדה לא-מנוצל (Requisition #) בטופס ההזמנה של המעבדה, ו"הזרקת" מספר התיק של הלקוח מהקליניקה לתוכו. ברגע שהמספר חוזר בתוצאה — יש זיהוי חד-חד-ערכי, ואימות כפול (מספר תיק + שם) לפני כל דחיפה אוטומטית.</p>
+              <p>לשתי המערכות אין מזהה משותף ללקוח או לבדיקה. הבעיה המרכזית הייתה למצוא דרך "להזריק" את מספר התיק של הלקוח כדי לבצע תאימות בין המערכות. הפתרון — איתור שדה לא-מנוצל (Requisition #) בטופס ההזמנה של המעבדה, והזרקת מספר התיק מהקליניקה לתוכו. ברגע שהמספר חוזר בתוצאה — יש זיהוי חד-חד-ערכי, ואימות כפול (מספר תיק + שם) לפני כל דחיפה אוטומטית.</p>
             </div>
             <a class="link-btn" href="http://idexx.167.86.69.208.nip.io" target="_blank">🔗 idexx.167.86.69.208.nip.io</a>
           </div>
@@ -251,6 +252,40 @@
             <div class="browser-frame">
               <div class="browser-bar"><span class="browser-dot" style="background:#ff5f56"></span><span class="browser-dot" style="background:#ffbd2e"></span><span class="browser-dot" style="background:#27c93f"></span><span class="browser-url">idexx.167.86.69.208.nip.io</span></div>
               <img class="browser-shot" src="presentation/images/slide05_idexx-dashboard.png" alt="IDEXX">
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 5b -->
+    <section class="slide" id="s5b" style="--glow:#34d39922">
+      <div class="slide-inner">
+        <div class="icon-badge">🧪</div>
+        <div class="slide-header">
+          <p class="kicker">כלי אוטומציה ו-AI</p>
+          <h2 class="slide-title">Element — אותו פתרון, <span class="accent">למכשיר שבתוך המרפאה</span></h2>
+          <p class="slide-sub">התאום של IDEXX: קולט אוטומטית תוצאות ממכשיר הבדיקות המקומי (Element RC / SciLVet) ודוחף לתיק</p>
+          <div class="rule"></div>
+        </div>
+        <div class="split">
+          <div class="col-text">
+            <ul class="bullets">
+              <li>מכשיר הבדיקות של המרפאה עצמה (לא מעבדה חיצונית) מפיק קובץ תוצאה לכל בדיקה — תוכנה קטנה במחשב המרפאה שולחת אותו אוטומטית לשרת</li>
+              <li>השרת מנתח את הנתונים, מזהה את הלקוח והחיה, ודוחף את התוצאות ישירות לתוכנת הניהול הקלינית</li>
+              <li>דוחף את הממצאים העיקריים לתיק, מבצע <b>ניתוח AI</b> ומאפשר לדחוף גם אותו — <b>אותו דשבורד מאוחד</b> ל-Element ול-IDEXX יחד</li>
+              <li>חוסך שעות עבודה ידניות ומונע פספוסים — בדיוק כמו ב-IDEXX, אבל למקור נתונים שונה לגמרי</li>
+            </ul>
+            <div class="tech-box">
+              <p class="label">הבדל מעניין מול IDEXX</p>
+              <p>אצל IDEXX המזהה המשותף בין המערכות אבד, ונדרש "להזריק" את מספר התיק בעורמה כדי לפתור את בעיית התאימות. אצל Element התיק כבר מוטבע מההתחלה בתוך קובץ התוצאה של המכשיר — אותו אתגר בדיוק, שני פתרונות שונים לגמרי.</p>
+            </div>
+            <a class="link-btn" href="http://element.167.86.69.208.nip.io" target="_blank">🔗 element.167.86.69.208.nip.io</a>
+          </div>
+          <div class="col-media">
+            <div class="browser-frame">
+              <div class="browser-bar"><span class="browser-dot" style="background:#ff5f56"></span><span class="browser-dot" style="background:#ffbd2e"></span><span class="browser-dot" style="background:#27c93f"></span><span class="browser-url">element.167.86.69.208.nip.io</span></div>
+              <img class="browser-shot" src="presentation/images/slide_element_dashboard.png" alt="Element">
             </div>
           </div>
         </div>
